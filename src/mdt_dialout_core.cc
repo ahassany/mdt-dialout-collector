@@ -7,8 +7,8 @@
 //#include <librdkafka/rdkafkacpp.h>
 #include "kafka/KafkaProducer.h"
 #include "mdt_dialout_core.h"
-#include "mdt_dialout.grpc.pb.h"
-#include "telemetry.pb.h"
+#include "cisco_dialout.grpc.pb.h"
+#include "cisco_telemetry.pb.h"
 #include <google/protobuf/arena.h>
 #include <google/protobuf/message.h>
 #include <google/protobuf/util/json_util.h>
@@ -94,7 +94,7 @@ void Srv::Stream::Start()
         //} else {
         //    std::exit(EXIT_FAILURE);
         //}
-        google::protobuf::Message *tlm = new telemetry::Telemetry;
+        google::protobuf::Message *tlm = new cisco_telemetry::Telemetry;
         if (tlm->ParseFromString(stream.data())) {
             google::protobuf::util::JsonOptions opt;
             opt.add_whitespace = true;
