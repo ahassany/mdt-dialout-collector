@@ -404,7 +404,8 @@ int SrvUtils::str2json_(const std::string& json_str, std::string& json_str_out)
 {
     const auto json_str_length = static_cast<int>(json_str.length());
     JSONCPP_STRING err;
-    Json::Value root;
+    Json::Value root_inner;
+    Json::Value root_outer;
     Json::CharReaderBuilder builderR;
     Json::StreamWriterBuilder builderW;
     const std::unique_ptr<Json::CharReader> reader(builderR.newCharReader());
@@ -418,7 +419,7 @@ int SrvUtils::str2json_(const std::string& json_str, std::string& json_str_out)
     label_map["platform_id"] = "platform_id";
 
     if (!reader->parse(json_str.c_str(), json_str.c_str() + json_str_length,
-                      &root, &err) and json_str_length != 0) {
+                      &root_inner, &err) and json_str_length != 0) {
         std::cout << "ERROR parsing the string - conversion to JSON Failed!"
                                                                 << std::endl;
         return EXIT_FAILURE;
@@ -427,8 +428,41 @@ int SrvUtils::str2json_(const std::string& json_str, std::string& json_str_out)
     //label.append(node_id);
     //label.append(platform_id);
     //root["label"] = label;
-    root["label"] = label_map;
-    json_str_out = Json::writeString(builderW, root);
+    root_inner["label"] = label_map;
+    std::string root_inner_str = Json::writeString(builderW, root_inner);
+
+    /** root_outer
+     *
+     * "seq":              fake1,
+     * "writer_id":        fake2,
+     * "timestamp":        fake3,
+     * "telemetry_node":   fake4,
+     * "event_type":       fake5,
+     * "telemetry_port":   fake6,
+     * "serialization":    fake7,
+     * "telemetry_data":   <root_inner>
+     *
+     */
+
+    std::string seq             =  "fake1";
+    std::string writer_id       =  "fake2";
+    std::string timestamp       =  "fake3";
+    std::string telemetry_node  =  "fake4";
+    std::string event_type      =  "fake5";
+    std::string telemetry_port  =  "fake6";
+    std::string serialization   =  "fake7";
+    std::string telemetry_data  =  root_inner_str;
+
+	root_outer["seq"] = seq;
+	root_outer["writer_id"] = writer_id;
+	root_outer["timestamp"] = timestamp ;
+	root_outer["telemetry_node"] = telemetry_node;
+	root_outer["event_type"] = event_type;
+	root_outer["telemetry_port"] = telemetry_port;
+	root_outer["serialization"] = serialization;
+	root_outer["telemetry_data"] = telemetry_data;
+
+    json_str_out = Json::writeString(builderW, root_outer);
 
     return EXIT_SUCCESS;
 }
