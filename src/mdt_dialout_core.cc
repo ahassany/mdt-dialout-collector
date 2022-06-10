@@ -428,7 +428,7 @@ int SrvUtils::str2json_(const std::string& json_str, std::string& json_str_out)
     //label.append(node_id);
     //label.append(platform_id);
     //root["label"] = label;
-    root_inner["label"] = label_map;
+    //root_inner["label"] = label_map;
     std::string root_inner_str = Json::writeString(builderW, root_inner);
 
     /** root_outer
@@ -461,6 +461,7 @@ int SrvUtils::str2json_(const std::string& json_str, std::string& json_str_out)
 	root_outer["telemetry_port"] = telemetry_port;
 	root_outer["serialization"] = serialization;
 	root_outer["telemetry_data"] = telemetry_data;
+    root_outer["label"] = label_map;
 
     json_str_out = Json::writeString(builderW, root_outer);
 
