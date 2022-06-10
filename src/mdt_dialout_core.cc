@@ -415,8 +415,8 @@ int SrvUtils::str2json_(const std::string& json_str, std::string& json_str_out)
     //std::string node_id = "node_id";
     //std::string platform_id = "platform_id";
     Json::Value label_map;
-    label_map["node_id"] = "node_id";
-    label_map["platform_id"] = "platform_id";
+    label_map["nkey"] = "node_id";
+    label_map["pkey"] = "platform_id";
 
     if (!reader->parse(json_str.c_str(), json_str.c_str() + json_str_length,
                       &root_inner, &err) and json_str_length != 0) {
@@ -444,13 +444,13 @@ int SrvUtils::str2json_(const std::string& json_str, std::string& json_str_out)
      *
      */
 
-    std::string seq             =  "fake1";
-    std::string writer_id       =  "fake2";
-    std::string timestamp       =  "fake3";
-    std::string telemetry_node  =  "fake4";
-    std::string event_type      =  "fake5";
-    std::string telemetry_port  =  "fake6";
-    std::string serialization   =  "fake7";
+    std::string seq             =  "seq";
+    std::string writer_id       =  "writer_id";
+    std::string timestamp       =  "timestamp";
+    std::string telemetry_node  =  "telemetry_node";
+    std::string event_type      =  "event_type";
+    std::string telemetry_port  =  "telemetry_port";
+    std::string serialization   =  "serialization";
     std::string telemetry_data  =  root_inner_str;
 
 	root_outer["seq"] = seq;
