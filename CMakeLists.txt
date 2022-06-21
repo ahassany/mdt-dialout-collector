@@ -40,7 +40,7 @@ get_filename_component(huawei_telemetry_proto_path "${huawei_telemetry_proto}" P
 # jsoncpp libs
 set(JSONCPP_INCLUDE_DIR /usr/include/jsoncpp)
 include_directories("${JSONCPP_INCLUDE_DIR}")
-pkg_check_modules(JSONCPP REQUIRED jsoncpp>=1.8.4)
+pkg_check_modules(JSONCPP REQUIRED jsoncpp>=1.7.0)
 link_libraries(${JSONCPP_LIBRARIES})
 message(STATUS "Using jsoncpp ${JSONCPP_VERSION}")
 
@@ -155,7 +155,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/utils")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 # Compile
-foreach(_target "mdt_dialout_collector")
+foreach(_target "mdt_dialout_collector" "benchmark")
     add_executable(
         ${_target}
         "${CMAKE_CURRENT_SOURCE_DIR}/src/${_target}.cc"

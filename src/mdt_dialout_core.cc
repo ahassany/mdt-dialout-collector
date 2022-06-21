@@ -195,6 +195,8 @@ Srv::HuaweiStream::HuaweiStream(
     Srv::HuaweiStream::Start();
 }
 
+int counter = 0;
+
 void Srv::CiscoStream::Start()
 {
     // Initial stream_status set to START
@@ -221,6 +223,13 @@ void Srv::CiscoStream::Start()
         // the key-word "this" is used as a unique TAG
         cisco_resp.Read(&cisco_stream, this);
         // returns true for GPB-KV & GPB, false for JSON
+        counter++;
+        std::stringstream sstm;
+        sstm << "/tmp/out_";
+        sstm << counter;
+        std::ofstream outfile(sstm.str(), std::ofstream::binary);
+        outfile.write(cisco_stream.data().c_str(), cisco_stream.data().size());
+        outfile.close();
         parsing_str = cisco_tlm->ParseFromString(cisco_stream.data());
 
         stream_data_in = cisco_stream.data();
