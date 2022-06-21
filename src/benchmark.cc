@@ -5,6 +5,13 @@
 #include <json/json.h>
 #include <chrono>
 
+using std::chrono::high_resolution_clock;
+using std::chrono::duration_cast;
+using std::chrono::duration;
+using std::chrono::milliseconds;
+using std::chrono::nanoseconds;
+
+
 
 int cisco_gpbkv2json(
     const std::unique_ptr<cisco_telemetry::Telemetry>& cisco_tlm,
@@ -17,22 +24,27 @@ void google_serialize(
 
     
 
-int main() {
+int main(int argc, char *args[]) {
+    if (argc < 2) {
+        std::cout << "No input file provided" <<std::endl;
+        return -1;
+    }
 
-    using std::chrono::high_resolution_clock;
-    using std::chrono::duration_cast;
-    using std::chrono::duration;
-    using std::chrono::milliseconds;
-    using std::chrono::nanoseconds;
-
-    std::ifstream input_stream("/tmp/out_6");
+    std::string input_file = args[1];
+    std::ifstream input_stream(input_file);
     
     std::unique_ptr<cisco_telemetry::Telemetry> cisco_tlm(
                 new cisco_telemetry::Telemetry());
     std::string json_str_out;
     cisco_tlm->ParseFromIstream(&input_stream);
 
+    int num_warmpup = 1000;
     int num_iterations = 10000;
+    std::cout << "Warm up for google serialize" << std::endl;
+    for (int i = 0; i < num_warmpup; i++) {
+        google_serialize(cisco_tlm, json_str_out);
+    }
+    std::cout << "Benchmarking google serialize" << std::endl;
     int64_t google_sum = 0;
     for (int i = 0; i < num_iterations; i++) {
         auto t1 = high_resolution_clock::now();
@@ -41,9 +53,12 @@ int main() {
         auto ns_int = duration_cast<nanoseconds>(t2 - t1);
         google_sum += ns_int.count();
     }
-    
     std::cout << "Google total time: " << google_sum << " for " << num_iterations << " iterations " << google_sum / num_iterations<< "ns/iter" << std::endl;
-    
+    std::cout << "Warm up for Custom serialize" << std::endl;
+    for (int i = 0; i < num_warmpup; i++) {
+        cisco_gpbkv2json(cisco_tlm, json_str_out);
+    }
+    std::cout << "Benchmarking custom serialize" << std::endl;
     int64_t cust_sum = 0;
     for (int i = 0; i < num_iterations; i++) {
         auto t1 = high_resolution_clock::now();
